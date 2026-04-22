@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ArticleCategory {
+  DESIGN
+  DEV
+  TYPOGRAPHY
+  OPINION
+}
+
+enum EventStatus {
+  PAST
+  CURRENT
+  UPCOMING
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWING
+  ACCEPTED
+  REJECTED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model TeamMember {
+  id          String    @id @default(cuid())
+  name        String
+  role        String
+  login1337   String?
+  focus       String?
+  year        String?
+  tags        String[]
+  avatarUrl   String?
+  githubUrl   String?
+  twitterUrl  String?
+  bio         String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  articles    Article[]
+}
+
+model Article {
+  id          String      @id @default(cuid())
+  title       String
+  slug        String      @unique
+  content     String      @db.Text
+  category    ArticleCategory
+  readTime    String?     // e.g. "5 MIN READ"
+  
+  authorId    String
+  author      TeamMember  @relation(fields: [authorId], references: [id])
+  
+  publishedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model CalendarEvent {
+  id          String    @id @default(cuid())
+  title       String
+  date        DateTime
+  type        String    // e.g. "Workshop", "Meetup"
+  location    String?   // Added location field
+  description String?   @db.Text
+  status      EventStatus @default(UPCOMING)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model JoinApplication {
+  id          String   @id @default(cuid())
+  login1337   String   @unique
+  whatsapp    String
+  message     String   @db.Text
+  status      ApplicationStatus @default(PENDING)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  login1337     String?   @unique
+  role          UserRole  @default(USER)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

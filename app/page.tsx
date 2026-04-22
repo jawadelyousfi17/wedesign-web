@@ -1,65 +1,116 @@
-import Image from "next/image";
+import { GridBackground } from "@/components/backgrounds/Grid";
+import { HeroSection } from "@/components/main/HeroSection";
+import { Button } from "@/components/ui/button";
+import { AnimatedNumber } from "@/components/ui/animated-number";
+import About from "@/components/main/About";
+import Crew from "@/components/main/Crew";
+import Projects from "@/components/main/Projects";
+import Calendar  from "@/components/main/Calendar";
+import Journal from "@/components/main/Journal";
+import ApplyForm from "@/components/main/ApplyForm";
+import Sponsors from "@/components/main/Sponsors";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export default async function Home() {
+  const latestArticles = await prisma.article.findMany({
+    where: {
+      publishedAt: {
+        not: null,
+      },
+    },
+    include: {
+      author: true,
+    },
+    orderBy: {
+      publishedAt: "desc",
+    },
+    take: 4,
+  });
+
+  const upcomingEvents = await prisma.calendarEvent.findMany({
+    where: {
+      status: {
+        in: ["UPCOMING", "CURRENT"],
+      },
+    },
+    orderBy: {
+      date: "asc",
+    },
+    take: 4,
+  });
+
+  const pastEvents = await prisma.calendarEvent.findMany({
+    where: {
+      status: "PAST",
+    },
+    orderBy: {
+      date: "desc",
+    },
+    take: 7,
+  });
+
+  const teamMembers = await prisma.teamMember.findMany({
+    orderBy: { createdAt: "asc" },
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="">
+      <HeroSection />
+
+
+      <div className="border-b border-foreground text-2xl py-12 flex gap-8 items-center justify-center bg-card px-6">
+        <span>
+          A student-run club at{" "}
+          <span className="font-bold bg-foreground text-background px-2">
+            1337 Coding School
+          </span>{" "}
+          where design meets the terminal. We build interfaces, ship
+          side-projects, and run weekly crits.
+        </span>
+        <div className="flex gap-2">
+          <Button>Join US</Button>
+          <Button variant={"outline"}>Meet The Team</Button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      <div className="flex items-center justify-center py-8 bg-card">
+        <div className="flex gap-22">
+          <div className="flex flex-col gap-0 justify-center items-center  pr-16 -mt-8">
+            <span className="text-[5rem]"><AnimatedNumber value={12} /></span>
+            <span className="text-sm text-foreground/50 -mt-6">Members</span>
+          </div>
+
+          <div className="flex flex-col gap-0 justify-center items-center  pr-16 -mt-8">
+            <span className="text-[5rem]"><AnimatedNumber value={5} /></span>
+            <span className="text-sm text-foreground/50 -mt-6">Projects</span>
+          </div>
+
+          <div className="flex flex-col gap-0 justify-center items-center  pr-16 -mt-8">
+            <span className="text-[5rem]"><AnimatedNumber value={9} /></span>
+            <span className="text-sm text-foreground/50 -mt-6">
+              Events Hosted
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-0 justify-center items-center -mt-8 ">
+            <span className="text-[5rem]"><AnimatedNumber value={3} /></span>
+            <span className="text-sm text-foreground/50 -mt-6">
+              Years running
+            </span>
+          </div>
         </div>
-      </main>
+      </div>
+
+      <About />
+
+      <Crew members={teamMembers} />
+
+      <Projects events={pastEvents} />
+
+
+      <Calendar events={upcomingEvents} />
+      <Journal articles={latestArticles} />
+      <ApplyForm />
     </div>
   );
 }
