@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { CalendarEvent } from '@prisma/client';
-import Link from 'next/link';
+import React, { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import { CalendarEvent } from "@prisma/client";
+import Link from "next/link";
 
 interface CalendarClientProps {
   initialEvents: CalendarEvent[];
@@ -13,20 +13,27 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function CalendarClient({ initialEvents }: CalendarClientProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   // Group events organically for rendering
-  const pastEvents = initialEvents.filter(e => e.status === 'PAST');
-  const currentEvents = initialEvents.filter(e => e.status === 'CURRENT');
-  const upcomingEvents = initialEvents.filter(e => e.status === 'UPCOMING');
+  const pastEvents = initialEvents.filter((e) => e.status === "PAST");
+  const currentEvents = initialEvents.filter((e) => e.status === "CURRENT");
+  const upcomingEvents = initialEvents.filter((e) => e.status === "UPCOMING");
 
-  const renderEventList = (events: CalendarEvent[], isDimmed: boolean = false) => (
+  const renderEventList = (
+    events: CalendarEvent[],
+    isDimmed: boolean = false,
+  ) =>
     events.map((e, i) => {
       const eventDate = new Date(e.date);
-      const day = eventDate.getDate().toString().padStart(2, '0');
-      const month = eventDate.toLocaleString('en-US', { month: 'long' });
+      const day = eventDate.getDate().toString().padStart(2, "0");
+      const month = eventDate.toLocaleString("en-US", { month: "long" });
       const year = eventDate.getFullYear().toString();
-      const time = eventDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+      const time = eventDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
 
       return (
         <Link href={`/calendar/${e.id}`} key={e.id} className="contents group ">
@@ -34,7 +41,7 @@ export default function CalendarClient({ initialEvents }: CalendarClientProps) {
             initial={{ opacity: 0, y: 24 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1 + i * 0.05, ease }}
-            className={`group relative border-b border-foreground/20  last:border-b-0 p-8 flex flex-col md:flex-row md:items-center gap-8 hover:bg-[#eaddcf] transition-colors duration-300 cursor-pointer overflow-hidden z-10 ${isDimmed ? 'opacity-60 grayscale-[0.5] hover:opacity-100 hover:grayscale-0' : ''}`}
+            className={`group relative border-b border-foreground/20  last:border-b-0 p-8 flex flex-col md:flex-row md:items-center gap-8 hover:bg-[#eaddcf] transition-colors duration-300 cursor-pointer overflow-hidden z-10 ${isDimmed ? "opacity-60 grayscale-[0.5] hover:opacity-100 hover:grayscale-0" : ""}`}
           >
             {/* Date Block (Agenda left column) */}
             <div className="md:w-32 shrink-0 flex flex-col gap-1 pl-12 md:pl-0">
@@ -57,8 +64,10 @@ export default function CalendarClient({ initialEvents }: CalendarClientProps) {
                     {time}
                   </span>
                 </div>
-                
-                <h3 className={`text-3xl font-serif tracking-tight leading-tight transition-colors group-hover:text-black ${e.status === 'PAST' ? 'line-through decoration-foreground/40' : ''}`}>
+
+                <h3
+                  className={`text-3xl font-serif tracking-tight leading-tight transition-colors group-hover:text-black ${e.status === "PAST" ? "line-through decoration-foreground/40" : ""}`}
+                >
                   {e.title}
                 </h3>
               </div>
@@ -69,18 +78,17 @@ export default function CalendarClient({ initialEvents }: CalendarClientProps) {
                   type="button"
                   className="inline-flex items-center gap-2 text-xs uppercase tracking-widest border-b border-foreground/30 pb-1 hover:border-black transition-colors group-hover:text-black"
                 >
-                   <span>{e.status === 'PAST' ? 'View Recap' : 'RSVP'}</span>
-                   <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                     →
-                   </span>
+                  <span>{e.status === "PAST" ? "View Recap" : "RSVP"}</span>
+                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
                 </button>
               </div>
             </div>
           </motion.article>
         </Link>
       );
-    })
-  );
+    });
 
   return (
     <div className="bg-card mx-auto w-full px-4  md:px-8 py-16" ref={ref}>
@@ -90,7 +98,8 @@ export default function CalendarClient({ initialEvents }: CalendarClientProps) {
           The Agenda
         </h1>
         <p className="text-sm uppercase tracking-widest text-foreground/60 max-w-lg leading-relaxed">
-          All our {initialEvents.length} events. From what we've already done, to what's happening right now, to what’s coming next.
+          All our {initialEvents.length} events. From what we've already done,
+          to what's happening right now, to what’s coming next.
         </p>
       </header>
 
@@ -107,7 +116,7 @@ export default function CalendarClient({ initialEvents }: CalendarClientProps) {
           </div>
         </div>
         {renderEventList(currentEvents)}
-        
+
         {/* Section: Upcoming */}
         <div className="relative z-10 border-y border-foreground/30 bg-foreground text-background">
           <div className="py-6 pl-12 md:pl-8 text-xs uppercase tracking-[0.3em] font-semibold md:ml-[13rem]">
@@ -123,7 +132,6 @@ export default function CalendarClient({ initialEvents }: CalendarClientProps) {
           </div>
         </div>
         {renderEventList(pastEvents, true)}
-        
       </div>
     </div>
   );
