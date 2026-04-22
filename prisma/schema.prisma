@@ -81,6 +81,8 @@ model CalendarEvent {
   description String?   @db.Text
   status      EventStatus @default(UPCOMING)
   
+  interestedUsers User[]  @relation("EventInterest")
+  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -105,6 +107,35 @@ model User {
   login1337     String?   @unique
   role          UserRole  @default(USER)
   
+  submissions   FormSubmission[]
+  interestedEvents CalendarEvent[] @relation("EventInterest")
+  
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Form {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  fields      Json     // Array of field objects { label, name, type, required, options? }
+  isActive    Boolean  @default(true)
+  
+  submissions FormSubmission[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FormSubmission {
+  id        String   @id @default(cuid())
+  formId    String
+  form      Form     @relation(fields: [formId], references: [id])
+  data      Json     // Object containing { fieldName: value }
+  
+  userId    String?  // Optional: link to a logged in user
+  user      User?    @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
 }

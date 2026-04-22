@@ -49,11 +49,20 @@ export default async function AdminLayout({
 
   return (
     <main className="flex-1 w-full relative">
-      {/* Paper Margin Lines */}
-      {/* <div className="absolute top-0 bottom-0 left-[2rem] md:left-[4rem] w-px bg-red-400/30 z-0 hidden md:block pointer-events-none"></div>
-      <div className="absolute top-0 bottom-0 left-[2.25rem] md:left-[4.25rem] w-px bg-red-400/30 z-0 hidden md:block pointer-events-none"></div> */}
-      
-      <div className="relative z-10 w-full max-w-7xl mx-auto bg-card px-4 md:px-8 py-16">
+      {/* Side Navigation for Admin */}
+      <div className="fixed left-0 top-0 bottom-0 w-24 hidden md:flex flex-col border-r border-foreground/10 z-20 bg-background pt-32 px-4 gap-8">
+          <Link href="/admin/journal" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Journal">
+             <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Journal</span>
+          </Link>
+          <Link href="/admin/calendar" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Calendar">
+             <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Events</span>
+          </Link>
+          <Link href="/admin/forms" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Forms">
+             <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Forms</span>
+          </Link>
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto md:pl-24 px-4 md:px-8 py-16">
         {children}
       </div>
     </main>

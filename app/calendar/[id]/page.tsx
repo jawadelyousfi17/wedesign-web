@@ -4,6 +4,8 @@ import { Locate, Clock, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import { createClient } from "@/lib/supabase/server";
+import InterestButton from "./interest-button";
 
 interface EventPageProps {
   params: Promise<{
@@ -16,11 +18,24 @@ export default async function EventPage({ params }: EventPageProps) {
 
   const event = await prisma.calendarEvent.findUnique({
     where: { id },
+    include: {
+      _count: {
+        select: { interestedUsers: true }
+      },
+      interestedUsers: {
+        select: { id: true }
+      }
+    }
   });
 
   if (!event) {
     notFound();
   }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const isInterested = user ? event.interestedUsers.some(u => u.id === user.id) : false;
 
   const eventDate = new Date(event.date);
   const day = eventDate.getDate().toString().padStart(2, '0');
@@ -78,6 +93,14 @@ export default async function EventPage({ params }: EventPageProps) {
                 <p className="text-sm text-foreground/80 font-medium">
                   Seats are highly limited to keep the crits tight and the coffee lines short.
                 </p>
+                
+                <InterestButton 
+                    eventId={event.id}
+                    isInterested={isInterested}
+                    interestedCount={event._count.interestedUsers}
+                    isLoggedIn={!!user}
+                />
+
                 <button className="group relative inline-flex items-center justify-between px-6 py-4 bg-foreground text-background hover:bg-black transition-colors duration-300 mt-2">
                   <span className="text-xs uppercase tracking-widest font-semibold">RSVP Now</span>
                   <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
