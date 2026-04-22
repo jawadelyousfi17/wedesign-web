@@ -12,7 +12,7 @@ interface CalendarClientProps {
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function CalendarClient({ initialEvents }: CalendarClientProps) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   // Group events organically for rendering
