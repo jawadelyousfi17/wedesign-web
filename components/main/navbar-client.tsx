@@ -12,6 +12,7 @@ import {
   ArrowUpRight,
   LogOut,
   User as UserIcon,
+  Search,
 } from "lucide-react";
 
 type NavUser = {
@@ -29,6 +30,7 @@ interface NavbarClientProps {
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
+  { label: "Lab", href: "/lab" },
   { label: "Projects", href: "/projects" },
   { label: "Services", href: "/services" },
   { label: "Merch", href: "/merch" },
@@ -106,7 +108,7 @@ export default function NavbarClient({
           scrolled ? "shadow-[0_4px_0_-1px_var(--color-foreground)]" : ""
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-4">
+        <div className="w-full px-4 md:px-6 lg:px-8 h-14 md:h-16 flex items-center justify-between gap-4">
           {/* ── LOGO ─────────────────────────────────────────────── */}
           <Link
             href="/"
@@ -149,9 +151,27 @@ export default function NavbarClient({
               );
             })}
 
+            {/* Command Palette Trigger */}
+            <button
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("open-command-palette"))
+              }
+              className="flex items-center gap-2 px-2.5 py-1.5 border border-foreground/10 hover:border-foreground/30 bg-foreground/5 hover:bg-foreground/10 transition-all text-foreground/50 hover:text-foreground rounded group/search"
+              title="Search (Ctrl+K)"
+            >
+              <Search
+                size={14}
+                className="group-hover/search:scale-110 transition-transform"
+              />
+              <div className="hidden lg:flex items-center gap-1 font-mono text-[10px] opacity-60">
+                <kbd className="min-w-[1.5em] text-center uppercase">Cmd</kbd>
+                <span>K</span>
+              </div>
+            </button>
+
             {isAdmin && (
               <Link
-                href="/admin/journal"
+                href="/admin"
                 className="text-sm flex items-center gap-1.5 text-foreground/70 hover:text-accent transition-colors border border-foreground/30 hover:border-accent px-2 py-1"
                 aria-current={isActive("/admin") ? "page" : undefined}
               >
@@ -162,7 +182,7 @@ export default function NavbarClient({
           </div>
 
           {/* ── DESKTOP CTA ──────────────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3 ml-auto">
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
@@ -213,7 +233,7 @@ export default function NavbarClient({
                     </Link>
                     {isAdmin && (
                       <Link
-                        href="/admin/journal"
+                        href="/admin"
                         role="menuitem"
                         className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors"
                       >
@@ -260,7 +280,7 @@ export default function NavbarClient({
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="md:hidden w-10 h-10 border-2 border-foreground flex items-center justify-center hover:bg-primary transition-colors"
+            className="md:hidden w-10 h-10 border-2 border-foreground flex items-center justify-center hover:bg-primary transition-colors ml-auto"
             aria-label="Open menu"
           >
             <Menu size={18} strokeWidth={2.5} />
@@ -330,7 +350,7 @@ export default function NavbarClient({
 
               {isAdmin && (
                 <Link
-                  href="/admin/journal"
+                  href="/admin"
                   className="flex items-center justify-between gap-2 py-4 text-xl font-serif tracking-tight text-foreground/80 hover:text-accent transition-colors border-b border-foreground/15"
                 >
                   <span className="flex items-center gap-2">

@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { MemberCard } from "./MemberCard";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "The Crew",
+  description: "Meet the designers, developers, and makers behind WeDesign. A student-run club at 1337 UM6P.",
+};
 
 export default async function CrewPage() {
   const members = await prisma.teamMember.findMany({

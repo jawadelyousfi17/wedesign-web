@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import Projects from "@/components/main/Projects";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description: "A showcase of high-end digital products, experiments, and aesthetics crafted at 1337 UM6P.",
+};
 
 export default async function AllProjectsPage() {
   const projects = await prisma.project.findMany({

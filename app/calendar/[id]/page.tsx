@@ -4,13 +4,38 @@ import { Locate, Clock, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
-import { createClient } from "@/lib/supabase/server";
 import InterestButton from "./interest-button";
+import { Metadata } from "next";
 
 interface EventPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+export async function generateMetadata({ 
+  params 
+}: EventPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const event = await prisma.calendarEvent.findUnique({
+    where: { id }
+  });
+
+  if (!event) return { title: "Event Not Found" };
+
+  return {
+    title: event.title,
+    description: `Join us for ${event.title} at ${event.location}. ${event.description?.substring(0, 100)}`,
+  };
+}
+
+export async function generateStaticParams() {
+  const events = await prisma.calendarEvent.findMany({
+    select: { id: true }
+  });
+  return events.map((event) => ({
+    id: event.id
+  }));
 }
 
 export default async function EventPage({ params }: EventPageProps) {
@@ -31,11 +56,6 @@ export default async function EventPage({ params }: EventPageProps) {
   if (!event) {
     notFound();
   }
-
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const isInterested = user ? event.interestedUsers.some(u => u.id === user.id) : false;
 
   const eventDate = new Date(event.date);
   const day = eventDate.getDate().toString().padStart(2, '0');
@@ -90,9 +110,8 @@ export default async function EventPage({ params }: EventPageProps) {
                 
                 <InterestButton 
                     eventId={event.id}
-                    isInterested={isInterested}
-                    interestedCount={event._count.interestedUsers}
-                    isLoggedIn={!!user}
+                    initialInterestedCount={event._count.interestedUsers}
+                    interestedUserIds={event.interestedUsers.map(u => u.id)}
                 />
 
                 <button className="group relative inline-flex items-center justify-between px-6 py-4 bg-foreground text-background hover:bg-black transition-colors duration-300 mt-2">

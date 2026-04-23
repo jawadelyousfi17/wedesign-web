@@ -12,6 +12,12 @@ import Sponsors from "@/components/main/Sponsors";
 import FAQ from "@/components/main/FAQ";
 import { prisma } from "@/lib/prisma";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Design & Code Club at 1337 UM6P",
+};
+
 export default async function Home() {
   const latestArticles = await prisma.article.findMany({
     where: {

@@ -7,6 +7,12 @@ import {
   Smartphone,
   Palette,
 } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Services",
+  description: "High-fidelity interfaces, robust code, and unique digital identities. See what WeDesign can do for your project.",
+};
 
 const SERVICES = [
   {

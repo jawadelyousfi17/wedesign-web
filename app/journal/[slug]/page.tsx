@@ -7,9 +7,30 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import JournalPostClient from "./journal-post-client";
 import PostActions from "./post-actions";
 import ReadingProgress from "./reading-progress";
+import { Metadata } from "next";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await prisma.article.findUnique({
+    where: { slug },
+  });
+
+  if (!post) return { title: "Post Not Found" };
+
+  return {
+    title: post.title,
+    description: post.content.substring(0, 160).replace(/[#*_]/g, ""),
+    openGraph: {
+      title: post.title,
+      description: post.content.substring(0, 160).replace(/[#*_]/g, ""),
+      type: "article",
+      publishedTime: post.publishedAt?.toISOString(),
+    },
+  };
 }
 
 export async function generateStaticParams() {
