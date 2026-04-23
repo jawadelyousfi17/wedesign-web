@@ -46,7 +46,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
                   initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
                   animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
                   transition={{ duration: 0.7, delay: 0.1 + i * 0.08, ease }}
-                  className="group relative border-b border-foreground/20 last:border-b-0 p-8 flex flex-col md:flex-row md:items-center gap-8 hover:bg-[#eaddcf] transition-colors duration-300 cursor-pointer overflow-hidden z-10"
+                  className="group relative border-b border-foreground/20 last:border-b-0 p-8 flex flex-col md:flex-row md:items-center gap-8 hover:bg-primary transition-colors duration-300 cursor-pointer overflow-hidden z-10"
                 >
                   {/* Date Block (Agenda left column) */}
                   <div className="md:w-32 shrink-0 flex flex-col gap-1 pl-12 md:pl-0">
@@ -62,7 +62,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
                   <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-8 pl-12 md:pl-8 border-t border-foreground/10 md:border-t-0 pt-6 md:pt-0">
                     <div className="flex flex-col gap-2 max-w-2xl">
                       <div className="flex items-center gap-3">
-                        <span className="text-[0.65rem] uppercase tracking-widest px-2 py-1 bg-foreground text-background transition-colors group-hover:bg-black">
+                        <span className="text-[0.65rem] uppercase tracking-widest px-2 py-1 bg-foreground text-background transition-colors group-hover:bg-foreground">
                           {e.type}
                         </span>
                         <span className="text-sm font-mono text-foreground/60 transition-colors group-hover:text-black/60">

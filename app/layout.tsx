@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="en"
       className={` ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
-      <body className="max-w-7xl mx-auto">
+      <body className=" mx-auto">
         <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
           <Navbar />
           <main className="flex-1">

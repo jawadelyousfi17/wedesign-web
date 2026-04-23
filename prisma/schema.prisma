@@ -62,7 +62,7 @@ model Article {
   slug        String      @unique
   content     String      @db.Text
   category    ArticleCategory
-  readTime    String?     // e.g. "5 MIN READ"
+  readTime    String?     
   
   authorId    String
   author      TeamMember  @relation(fields: [authorId], references: [id])
@@ -76,8 +76,8 @@ model CalendarEvent {
   id          String    @id @default(cuid())
   title       String
   date        DateTime
-  type        String    // e.g. "Workshop", "Meetup"
-  location    String?   // Added location field
+  type        String    
+  location    String?   
   description String?   @db.Text
   status      EventStatus @default(UPCOMING)
   
