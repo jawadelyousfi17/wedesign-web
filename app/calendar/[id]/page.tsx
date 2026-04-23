@@ -47,12 +47,6 @@ export default async function EventPage({ params }: EventPageProps) {
     <div className="flex flex-col text-foreground font-sans">
       <main className="flex-1  mx-auto w-full relative py-16 px-6 md:px-12 bg-card">
         <article className="relative z-10">
-          {/* Back button */}
-          <Link href="/calendar" className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-foreground/60 hover:text-black mb-16 transition-colors group">
-            <span className="transition-transform duration-300 group-hover:-translate-x-1">←</span>
-            <span>Back to Agenda</span>
-          </Link>
-
           {/* Header */}
           <header className="mb-16 border-b border-foreground/20 pb-12">
             <div className="flex flex-wrap items-center gap-4 mb-8 text-xs uppercase tracking-widest text-foreground/75">

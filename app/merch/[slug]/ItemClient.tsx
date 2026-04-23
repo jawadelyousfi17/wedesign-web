@@ -118,7 +118,7 @@ export default function ItemClient({ item }: { item: MerchItem }) {
   /* ══════════════════════════════════════════════════════════ */
   if (isSuccess) {
     return (
-      <div className="pt-10 md:pt-28 pb-20 px-4 md:px-8">
+      <div className="pt-3 md:pt-28 pb-20 px-4 md:px-8">
         <div className="max-w-xl mx-auto">
           <div className="relative">
             <div
@@ -136,12 +136,6 @@ export default function ItemClient({ item }: { item: MerchItem }) {
                 We've got your request for <strong className="font-semibold not-italic">{item.title}</strong>.
                 Someone from the crew will call you within a day to confirm delivery.
               </p>
-              <Link
-                href="/merch"
-                className="mt-2 border-2 border-foreground bg-foreground text-background px-6 py-3 hover:bg-primary hover:text-foreground transition-colors text-sm font-semibold"
-              >
-                Back to the gear
-              </Link>
             </div>
           </div>
         </div>
@@ -154,19 +148,6 @@ export default function ItemClient({ item }: { item: MerchItem }) {
   /* ══════════════════════════════════════════════════════════ */
   return (
     <div className="flex flex-col pt-10 md:pt-28 pb-20">
-      <div className="px-4 md:px-8 max-w-7xl mx-auto w-full mb-10">
-        <Link
-          href="/merch"
-          className="group inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground transition-colors"
-        >
-          <ArrowLeft
-            size={14}
-            className="transition-transform duration-200 group-hover:-translate-x-1"
-          />
-          <span>Back to club gear</span>
-        </Link>
-      </div>
-
       <div className="px-4 md:px-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
         {/* ═══ LEFT: GALLERY ═════════════════════════════════════ */}
         <div className="flex flex-col gap-5">

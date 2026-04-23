@@ -72,7 +72,7 @@ const NOT_US = [
 
 export default function ServicesPage() {
   return (
-    <div className="flex flex-col pt-10 md:pt-28 pb-20">
+    <div className="flex flex-col pt-3 md:pt-28 pb-20">
       {/* ═══ HEADER ═══════════════════════════════════════════════ */}
       <section className="px-4 md:px-8 max-w-7xl mx-auto w-full mb-16 md:mb-24">
         <div className="flex flex-col gap-6 max-w-4xl">

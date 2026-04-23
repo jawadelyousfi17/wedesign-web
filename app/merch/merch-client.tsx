@@ -37,7 +37,7 @@ export default function MerchClient({ items }: MerchClientProps) {
   );
 
   return (
-    <div className="flex flex-col pt-5 md:pt-12 pb-20">
+    <div className="flex flex-col pt-3 md:pt-12 pb-20">
       {/* ═══ HEADER ═══════════════════════════════════════════════ */}
       <section className="px-4 md:px-8 max-w-7xl mx-auto w-full mb-6 md:mb-12">
         <div className="flex flex-col gap-6 max-w-4xl">

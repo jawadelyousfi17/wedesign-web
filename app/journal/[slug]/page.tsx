@@ -76,17 +76,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <JournalPostClient />
 
       <main className="relative z-10 flex-1 mx-auto w-full py-16 px-6 md:px-8">
-        <Link
-          href="/journal"
-          className="group inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground transition-colors mb-12"
-        >
-          <ArrowLeft
-            size={14}
-            className="transition-transform duration-200 group-hover:-translate-x-1"
-          />
-          <span>Back to the notebook</span>
-        </Link>
-
         <header className="mb-16 pb-12 border-b-2 border-foreground">
           <div className="flex items-center gap-3 mb-8 flex-wrap text-sm text-foreground/70">
             {post.category && (
