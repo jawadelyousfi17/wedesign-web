@@ -3,11 +3,11 @@
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Article, TeamMember } from "@prisma/client";
+import { Article, User } from "@prisma/client";
 import { Search, X, ArrowUpRight } from "lucide-react";
 
 type ArticleWithAuthor = Article & {
-  author: TeamMember;
+  author: User | null;
 };
 
 interface JournalClientProps {
@@ -79,7 +79,7 @@ export default function JournalClient({ initialArticles }: JournalClientProps) {
         return false;
       }
       if (!q) return true;
-      const hay = [p.title, p.category, p.excerpt, p.author?.name]
+      const hay = [p.title, p.category, p.author?.name, p.author?.login1337]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -236,12 +236,6 @@ function FeaturedCard({ article }: { article: ArticleWithAuthor }) {
           {article.title}
         </h2>
 
-        {article.excerpt && (
-          <p className="text-base md:text-lg text-foreground/75 leading-relaxed max-w-2xl line-clamp-3 font-serif">
-            {article.excerpt}
-          </p>
-        )}
-
         <div className="flex items-center justify-between gap-4 flex-wrap mt-2">
           <AuthorStamp author={article.author} />
 
@@ -313,13 +307,6 @@ function EntryCard({ article, index }: { article: ArticleWithAuthor; index: numb
             {article.title}
           </h3>
 
-          {/* excerpt */}
-          {article.excerpt && (
-            <p className="text-sm text-foreground/65 leading-relaxed line-clamp-2 font-serif">
-              {article.excerpt}
-            </p>
-          )}
-
           {/* bottom meta */}
           <div className="flex items-center justify-between gap-4 pt-4 border-t border-foreground/15 mt-auto">
             <AuthorStamp author={article.author} compact />
@@ -342,7 +329,7 @@ function EntryCard({ article, index }: { article: ArticleWithAuthor; index: numb
 }
 
 /* ══════════════════════════════════════════════════════════════ */
-function AuthorStamp({ author, compact = false }: { author: TeamMember; compact?: boolean }) {
+function AuthorStamp({ author, compact = false }: { author: User | null; compact?: boolean }) {
   if (!author) return null;
 
   return (
@@ -352,16 +339,16 @@ function AuthorStamp({ author, compact = false }: { author: TeamMember; compact?
           compact ? "w-7 h-7" : "w-10 h-10"
         } border border-foreground bg-primary flex items-center justify-center overflow-hidden shrink-0 [border-radius:42%_58%_38%_62%/51%_43%_57%_49%]`}
       >
-        {author.avatarUrl ? (
+        {author.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={author.avatarUrl} alt="" className="w-full h-full object-cover" />
+          <img src={author.image} alt="" className="w-full h-full object-cover" />
         ) : (
           <span
             className={`${
               compact ? "text-xs" : "text-sm"
             } font-serif italic text-primary-foreground`}
           >
-            {author.name?.charAt(0)}
+            {(author.name || author.login1337)?.charAt(0)}
           </span>
         )}
       </div>
@@ -370,7 +357,7 @@ function AuthorStamp({ author, compact = false }: { author: TeamMember; compact?
           compact ? "text-xs" : "text-sm"
         } font-semibold text-foreground truncate`}
       >
-        {author.name}
+        {author.name || author.login1337}
       </span>
     </div>
   );

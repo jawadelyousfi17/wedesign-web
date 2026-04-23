@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono, Instrument_Serif } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono, Cardo } from "next/font/google";
 import "./globals.css";
 import "./styles.css";
 import { Navbar } from "@/components/main/Navbar";
@@ -15,9 +15,9 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const instrumentSerif = Instrument_Serif({
+const cardo = Cardo({
   weight: "400",
-  variable: "--font-instrument-serif",
+  variable: "--font-cardo",
   subsets: ["latin"],
 });
 
@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark max-w-7xl mx-auto ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`max-w-7xl mx-auto ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${cardo.variable} h-full antialiased`}
     >
       <body className=" mx-auto">
         <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">

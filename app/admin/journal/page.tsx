@@ -12,7 +12,7 @@ export default async function AdminJournalPage() {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b border-foreground/20">
         <div className="flex flex-col gap-4">
-          <span className="text-xs1 font-sans uppercase tracking-widest text-foreground/50 border border-foreground/10 px-2 py-0.5 w-fit">
+          <span className="text-xs font-sans uppercase tracking-widest text-foreground/50 border border-foreground/10 px-2 py-0.5 w-fit">
             System Admin Panel
           </span>
           <h1 className="text-5xl md:text-7xl font-serif italic text-foreground tracking-tight leading-tight">
@@ -64,7 +64,7 @@ export default async function AdminJournalPage() {
                     {article.title}
                  </h3>
                  <span className="text-[10px] font-sans uppercase tracking-widest text-foreground/50 group-hover:text-black/50 transition-colors">
-                    By {article.author.name}
+                    By {article.author?.name || article.author?.login1337 || "Unknown"}
                  </span>
               </div>
               

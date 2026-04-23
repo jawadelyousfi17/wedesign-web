@@ -22,28 +22,13 @@ export async function createArticle(formData: FormData) {
     .replace(/[\s_]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-  // Find a team member associated with this user or just use a default one for now
-  // In a real app, you'd link User to TeamMember
-  let teamMember = await prisma.teamMember.findFirst({
-    where: { name: user.user_metadata?.full_name || "Admin" }
-  });
-
-  if (!teamMember) {
-    teamMember = await prisma.teamMember.create({
-      data: {
-        name: user.user_metadata?.full_name || "Admin",
-        role: "Admin",
-      }
-    });
-  }
-
   await prisma.article.create({
     data: {
       title,
       slug,
       content,
       category,
-      authorId: teamMember.id,
+      authorId: user.id,
       publishedAt: new Date(),
     },
   });

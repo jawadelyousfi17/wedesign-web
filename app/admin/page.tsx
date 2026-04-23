@@ -133,7 +133,7 @@ export default async function AdminDashboardPage() {
                         {a.title}
                       </h3>
                       <span className="text-xs uppercase tracking-widest text-foreground/50 group-hover:text-black/50 transition-colors">
-                        {a.author.name} · {a.category}
+                        {a.author?.name || "Unknown"} · {a.category}
                       </span>
                     </div>
                   </div>

@@ -9,7 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-jetbrains-mono);
-  --font-serif: var(--font-instrument-serif);
+  --font-serif: var(--font-cardo);
 
   /* expose the poster colors to utilities like bg-hot, text-acid, etc. */
   --color-acid: var(--acid);
@@ -72,7 +72,7 @@
   --primary-foreground: #0a0a0a;
 
   /* ACCENT — vermilion, more red less orange, screams more */
-  --accent: #05df72;
+  --accent: #ff4d14;
   --accent-foreground: #f1ede1;
 
   /* SECONDARY — hot pink, the third poster color */

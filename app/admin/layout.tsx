@@ -54,8 +54,14 @@ export default async function AdminLayout({
           <Link href="/admin/journal" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Journal">
              <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Journal</span>
           </Link>
+          <Link href="/admin/projects" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Projects">
+             <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Projects</span>
+          </Link>
           <Link href="/admin/calendar" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Calendar">
              <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Events</span>
+          </Link>
+          <Link href="/admin/merch" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Merch">
+             <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Merch</span>
           </Link>
           <Link href="/admin/forms" className="p-4 hover:bg-foreground hover:text-background transition-colors border border-foreground/10 flex items-center justify-center" title="Forms">
              <span className="text-[10px] uppercase font-bold [writing-mode:vertical-rl] rotate-180 tracking-widest">Forms</span>

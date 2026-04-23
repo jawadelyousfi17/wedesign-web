@@ -11,7 +11,6 @@ import {
 } from "framer-motion";
 
 const words = ["The Future.", "The Web.", "Experiences.", "Tomorrow.", "Wonder."];
-const badgeEvents = ["48H JAM — 19 MAY", "DESIGN TALK — 12 JUN", "WEB AWARDS — 05 JUL"];
 
 /* ══════════════════════════════════════════════════════════════════ */
 /*  MORPH — slot-machine word swap with 3D flip + optional shimmer    */
@@ -177,9 +176,18 @@ function RotatingStamp() {
 /* ══════════════════════════════════════════════════════════════════ */
 /*  HANGING BADGE                                                     */
 /* ══════════════════════════════════════════════════════════════════ */
-function HangingBadge() {
+function HangingBadge({ events }: { events: any[] }) {
   const rotate = useMotionValue(-3);
   const smoothRotate = useSpring(rotate, { stiffness: 60, damping: 8, mass: 1.2 });
+
+  const formattedEvents = events.length > 0 
+    ? events.map(e => {
+        const d = new Date(e.date);
+        const day = d.getDate();
+        const month = d.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        return `${e.title.toUpperCase()} — ${day} ${month}`;
+      })
+    : ["WELCOME"];
 
   useEffect(() => {
     let raf: number;
@@ -215,12 +223,12 @@ function HangingBadge() {
           onHoverStart={kick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
-          className="relative bg-primary text-foreground font-mono font-bold text-sm md:text-base px-6 py-3 border border-foreground cursor-pointer select-none"
+          className="relative bg-accent text-black font-mono font-bold text-sm md:text-base px-6 py-3 border border-foreground cursor-pointer select-none"
           style={{ boxShadow: "6px 6px 0 var(--color-foreground)" }}
         >
-          <span className="absolute -top-1.5 left-3 w-2.5 h-2.5 rounded-full bg-foreground" />
-          <span className="absolute -top-1.5 right-3 w-2.5 h-2.5 rounded-full bg-foreground" />
-          <Morph words={badgeEvents} interval={3500} />
+          <span className="absolute -top-1.5 left-16.75 w-2.5 h-2.5 rounded-full bg-foreground" />
+          <span className="absolute -top-1.5 right-16.75 w-2.5 h-2.5 rounded-full bg-foreground" />
+          <Morph words={formattedEvents} interval={3500} />
         </motion.div>
 
         <motion.div
@@ -350,7 +358,7 @@ function Ticker() {
 /* ══════════════════════════════════════════════════════════════════ */
 /*  HERO SECTION                                                      */
 /* ══════════════════════════════════════════════════════════════════ */
-export function HeroSection() {
+export function HeroSection({ events = [] }: { events?: any[] }) {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const tiltX = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), {
@@ -409,7 +417,7 @@ export function HeroSection() {
 
       <Particles />
       <RotatingStamp />
-      <HangingBadge />
+      <HangingBadge events={events} />
 
       {/* Top label */}
       <motion.div

@@ -13,7 +13,7 @@ function Stamp() {
       className="absolute -top-10 -right-10 w-28 h-28 pointer-events-none select-none z-20"
       initial={{ opacity: 0, scale: 0, rotate: -180 }}
       animate={{ opacity: 1, scale: 1, rotate: 0 }}
-      transition={{ delay: 0.6, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 0.2, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
         className="relative w-full h-full"
@@ -126,14 +126,14 @@ export default function LoginPage() {
         className="absolute top-20 left-10 w-16 h-16 bg-primary hidden md:block"
         initial={{ opacity: 0, rotate: 0 }}
         animate={{ opacity: 1, rotate: 12 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
+        transition={{ delay: 0.5, duration: 0.6 }}
         whileHover={{ rotate: 24, scale: 1.1 }}
       />
       <motion.div
         className="absolute bottom-32 right-16 w-20 h-20 border-2 border-foreground hidden md:block"
         initial={{ opacity: 0, rotate: 0 }}
         animate={{ opacity: 1, rotate: -15 }}
-        transition={{ delay: 1, duration: 0.6 }}
+        transition={{ delay: 0.7, duration: 0.6 }}
         style={{ backgroundColor: "var(--color-secondary)" }}
       />
       <motion.div
@@ -163,18 +163,7 @@ export default function LoginPage() {
             <CornerCrop position="tl" />
             <CornerCrop position="bl" />
 
-            {/* eyebrow badge */}
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="flex items-center gap-3"
-            >
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/70">
-                System Access // Secure Channel
-              </span>
-            </motion.div>
+           
 
             {/* headline — per-letter reveal */}
             <motion.h1
@@ -183,13 +172,13 @@ export default function LoginPage() {
               transition={{ delay: 0.3 }}
               className="text-6xl md:text-7xl lg:text-8xl font-serif italic text-foreground leading-[0.85] tracking-tight"
             >
-              {"Authenticate.".split("").map((ch, i) => (
+              {"LOGIN.".split("").map((ch, i) => (
                 <motion.span
                   key={i}
                   initial={{ y: "110%", opacity: 0, rotate: 6 }}
                   animate={{ y: 0, opacity: 1, rotate: 0 }}
                   transition={{
-                    delay: 0.35 + i * 0.04,
+                    delay: 0.1 + i * 0.04,
                     duration: 0.8,
                     ease: [0.22, 1, 0.36, 1],
                   }}
@@ -200,54 +189,21 @@ export default function LoginPage() {
               ))}
             </motion.h1>
 
-            {/* description */}
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1, duration: 0.6 }}
-              className="font-sans text-sm text-foreground/70 leading-relaxed max-w-md"
-            >
-              Connect your account to access the crew board, edit events,
-              or drop a new journal entry.
-            </motion.p>
-
+          
             {/* divider with label */}
-            <motion.div
-              initial={{ opacity: 0, scaleX: 0 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ delay: 1.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              style={{ transformOrigin: "left" }}
-              className="flex items-center gap-3 mt-2"
-            >
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/50 whitespace-nowrap">
-                → Sign in
-              </span>
-              <span className="h-px flex-1 bg-foreground/30" />
-            </motion.div>
+          
 
             {/* the actual form */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3, duration: 0.6 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
             >
               <LoginForm />
             </motion.div>
 
             {/* footer strip */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.8, duration: 0.6 }}
-              className="mt-auto pt-6 border-t border-foreground/20 flex justify-between items-center font-mono text-[10px] text-foreground/60 uppercase tracking-[0.25em]"
-            >
-              <span>we/design</span>
-              <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                LIVE · {time || "--:--:--"}
-              </span>
-              <span>1337 · UM6P</span>
-            </motion.div>
+          
           </div>
 
           {/* ══ RIGHT: Poster panel (info column) ═══════════════════ */}

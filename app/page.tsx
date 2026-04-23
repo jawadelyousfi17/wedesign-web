@@ -9,6 +9,7 @@ import Calendar  from "@/components/main/Calendar";
 import Journal from "@/components/main/Journal";
 import ApplyForm from "@/components/main/ApplyForm";
 import Sponsors from "@/components/main/Sponsors";
+import FAQ from "@/components/main/FAQ";
 import { prisma } from "@/lib/prisma";
 
 export default async function Home() {
@@ -53,12 +54,29 @@ export default async function Home() {
     orderBy: { createdAt: "asc" },
   });
 
+  const allProjects = await prisma.project.findMany({
+    include: {
+      authors: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  // Select 1 featured and up to 3 others for the home page
+  const featured = allProjects.find(p => p.isFeatured) || (allProjects.length > 0 ? allProjects[0] : null);
+  const others = allProjects
+    .filter(p => p.id !== featured?.id)
+    .slice(0, 3);
+  
+  const homeProjects = featured ? [featured, ...others] : others;
+
   return (
     <div className="">
-      <HeroSection />
+      <HeroSection events={upcomingEvents} />
 
 
-      <div className="border-b border-foreground text-2xl py-12 flex gap-8 items-center justify-center bg-card px-6">
+      {/* <div className="border-b border-foreground text-2xl py-12 flex gap-8 items-center justify-center bg-card px-6">
         <span>
           A student-run club at{" "}
           <span className="font-bold bg-foreground text-background px-2">
@@ -99,18 +117,22 @@ export default async function Home() {
             </span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <About />
 
       <Crew members={teamMembers} />
 
-      {/* <Projects events={pastEvents} />
+        <div className="mt-16">
+
+        </div>
+      <Projects projects={homeProjects} showViewAll  />
 
 
-      <Calendar events={upcomingEvents} /> */}
+      <Calendar events={upcomingEvents} />
       <Journal articles={latestArticles} />
       {/* <ApplyForm /> */}
+      <FAQ />
     </div>
   );
 }

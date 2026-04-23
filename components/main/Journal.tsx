@@ -2,11 +2,11 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Article, TeamMember } from "@prisma/client";
+import { Article, User } from "@prisma/client";
 import Link from "next/link";
 
 type ArticleWithAuthor = Article & {
-  author: TeamMember;
+  author: User | null;
 };
 
 interface JournalProps {
@@ -142,13 +142,6 @@ function NotePage({
               {article.title}
             </h3>
 
-            {/* excerpt as if jotted below */}
-            {article.excerpt && (
-              <p className="text-sm text-foreground/70 font-serif italic leading-relaxed line-clamp-2">
-                {article.excerpt}
-              </p>
-            )}
-
             {/* footer row */}
             <div className="flex items-end justify-between gap-4 pt-4 border-t border-dashed border-foreground/25 mt-auto">
               <div className="flex flex-col">
@@ -156,7 +149,7 @@ function NotePage({
                   signed,
                 </span>
                 <span className="text-base text-foreground font-serif tracking-tight">
-                  {article.author?.name}
+                  {article.author?.name || article.author?.login1337}
                 </span>
               </div>
 
@@ -192,10 +185,10 @@ function NotePage({
 /* ══════════════════════════════════════════════════════════════════ */
 const Journal: React.FC<JournalProps> = ({ articles }) => {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section ref={ref} className="relative px-4 mt-22" id="journal">
+    <section ref={ref} className="relative px-4 " id="journal">
       {/* faint corkboard / desk texture behind the notes */}
       <div
         aria-hidden
