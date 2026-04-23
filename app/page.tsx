@@ -105,12 +105,12 @@ export default async function Home() {
 
       <Crew members={teamMembers} />
 
-      <Projects events={pastEvents} />
+      {/* <Projects events={pastEvents} />
 
 
-      <Calendar events={upcomingEvents} />
+      <Calendar events={upcomingEvents} /> */}
       <Journal articles={latestArticles} />
-      <ApplyForm />
+      {/* <ApplyForm /> */}
     </div>
   );
 }
