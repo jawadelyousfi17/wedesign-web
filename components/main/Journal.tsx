@@ -195,7 +195,7 @@ const Journal: React.FC<JournalProps> = ({ articles }) => {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section ref={ref} className="relative px-4" id="journal">
+    <section ref={ref} className="relative px-4 mt-22" id="journal">
       {/* faint corkboard / desk texture behind the notes */}
       <div
         aria-hidden
@@ -209,7 +209,7 @@ const Journal: React.FC<JournalProps> = ({ articles }) => {
 
       <div className="relative  mx-auto flex flex-col gap-14">
         {/* header */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
           <h2 className="text-5xl md:text-7xl lg:text-8xl font-serif tracking-tight leading-[0.95] text-foreground">
             From the{" "}
             <span className="italic relative inline-block">
@@ -221,14 +221,14 @@ const Journal: React.FC<JournalProps> = ({ articles }) => {
             </span>
             .
           </h2>
-          <p className="text-base md:text-lg text-foreground/70 max-w-xl leading-relaxed font-serif italic">
+          {/* <p className="text-base md:text-lg text-foreground/70 max-w-xl leading-relaxed font-serif italic">
             Loose pages torn from our shared notebook — thoughts, rants, and the
             occasional useful idea.
-          </p>
+          </p> */}
         </div>
 
         {/* note grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12 -mt-6 pb-8">
           {articles.map((article, i) => (
             <NotePage
               key={article.id}
