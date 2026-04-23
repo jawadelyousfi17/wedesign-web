@@ -104,6 +104,10 @@ export function CommandPalette() {
   const isOpenRef = useRef(isOpen);
   isOpenRef.current = isOpen;
 
+  useEffect(() => {
+    console.log("🏁 CommandPalette mounted and listening for keys...");
+  }, []);
+
   /* load recents from sessionStorage */
   useEffect(() => {
     try {
@@ -132,8 +136,11 @@ export function CommandPalette() {
   /* global shortcuts — bound once */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      console.log("⌨️ Key pressed:", e.key, "| Meta:", e.metaKey, "| Ctrl:", e.ctrlKey);
+      
       // ⌘K / Ctrl+K → toggle
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        console.log("🚀 CMD+K detected!");
         e.preventDefault();
         setIsOpen((o) => !o);
         return;

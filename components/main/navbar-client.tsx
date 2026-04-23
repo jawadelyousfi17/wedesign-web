@@ -153,9 +153,10 @@ export default function NavbarClient({
 
             {/* Command Palette Trigger */}
             <button
-              onClick={() =>
-                window.dispatchEvent(new CustomEvent("open-command-palette"))
-              }
+              onClick={() => {
+                console.log("🖱️ Search button clicked, dispatching open-command-palette event");
+                window.dispatchEvent(new CustomEvent("open-command-palette"));
+              }}
               className="flex items-center gap-2 px-2.5 py-1.5 border border-foreground/10 hover:border-foreground/30 bg-foreground/5 hover:bg-foreground/10 transition-all text-foreground/50 hover:text-foreground rounded group/search"
               title="Search (Ctrl+K)"
             >
