@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function createTeamMember(formData: FormData) {
   const name      = formData.get("name") as string;
@@ -31,6 +32,8 @@ export async function createTeamMember(formData: FormData) {
     },
   });
 
+  revalidatePath("/team");
+  revalidatePath("/");
   redirect("/admin/team");
 }
 
@@ -63,10 +66,14 @@ export async function updateTeamMember(id: string, formData: FormData) {
     },
   });
 
+  revalidatePath("/team");
+  revalidatePath("/");
   redirect("/admin/team");
 }
 
 export async function deleteTeamMember(id: string) {
   await prisma.teamMember.delete({ where: { id } });
+  revalidatePath("/team");
+  revalidatePath("/");
   redirect("/admin/team");
 }

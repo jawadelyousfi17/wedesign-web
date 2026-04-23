@@ -12,6 +12,15 @@ interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const articles = await prisma.article.findMany({
+    select: { slug: true },
+  });
+  return articles.map((article) => ({
+    slug: article.slug,
+  }));
+}
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
 

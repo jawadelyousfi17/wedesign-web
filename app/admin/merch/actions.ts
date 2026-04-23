@@ -37,6 +37,7 @@ export async function createMerchItem(formData: FormData) {
 
   revalidatePath("/admin/merch");
   revalidatePath("/merch");
+  revalidatePath("/");
   redirect("/admin/merch");
 }
 
@@ -72,6 +73,7 @@ export async function updateMerchItem(id: string, formData: FormData) {
 
   revalidatePath("/admin/merch");
   revalidatePath("/merch");
+  revalidatePath("/");
   redirect("/admin/merch");
 }
 
@@ -81,6 +83,7 @@ export async function deleteMerchItem(id: string) {
   });
   revalidatePath("/admin/merch");
   revalidatePath("/merch");
+  revalidatePath("/");
 }
 
 /* ── Merch Orders ────────────────────────────────────────────────── */

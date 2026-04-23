@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { EventStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function createEvent(formData: FormData) {
   const supabase = await createClient();
@@ -31,6 +32,8 @@ export async function createEvent(formData: FormData) {
     },
   });
 
+  revalidatePath("/calendar");
+  revalidatePath("/");
   redirect("/admin/calendar");
 }
 
@@ -61,5 +64,7 @@ export async function updateEvent(id: string, formData: FormData) {
     },
   });
 
+  revalidatePath("/calendar");
+  revalidatePath("/");
   redirect("/admin/calendar");
 }

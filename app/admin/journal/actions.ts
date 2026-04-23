@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ArticleCategory } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function createArticle(formData: FormData) {
   const supabase = await createClient();
@@ -33,6 +34,8 @@ export async function createArticle(formData: FormData) {
     },
   });
 
+  revalidatePath("/journal");
+  revalidatePath("/");
   redirect("/admin/journal");
 }
 
@@ -57,5 +60,7 @@ export async function updateArticle(id: string, formData: FormData) {
     },
   });
 
+  revalidatePath("/journal");
+  revalidatePath("/");
   redirect("/admin/journal");
 }
