@@ -32,6 +32,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Lab", href: "/lab" },
   { label: "Projects", href: "/projects" },
+  { label: "AI Chat", href: "/chatbot" },
   { label: "Services", href: "/services" },
   { label: "Merch", href: "/merch" },
   { label: "Calendar", href: "/calendar" },

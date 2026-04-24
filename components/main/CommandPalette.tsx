@@ -45,6 +45,10 @@ const PAGES: SearchResult[] = [
   { id: "l2", title: "Experiment: Magnetic 3D Glyphs", type: "project", href: "/lab/glyph-3d" },
   { id: "l3", title: "Experiment: ASCII Spinning Donut", type: "project", href: "/lab/ascii-donut" },
   { id: "l4", title: "Experiment: Real-time ASCII Camera", type: "project", href: "/lab/ascii-camera" },
+  { id: "l5", title: "Experiment: Gravity Terminal", type: "project", href: "/lab/gravity-terminal" },
+  { id: "l6", title: "Experiment: How Animals See", type: "project", href: "/lab/animal-vision" },
+  { id: "l7", title: "Experiment: Holistic Neural Interface", type: "project", href: "/lab/neural-interface" },
+  { id: "l8", title: "Experiment: Virtual Hand Mouse", type: "project", href: "/lab/virtual-hand-mouse" },
 ];
 
 const COMMANDS: SearchResult[] = [

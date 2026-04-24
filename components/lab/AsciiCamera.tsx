@@ -2,10 +2,23 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, AlertCircle, Maximize2, Minimize2, Download, X } from "lucide-react";
+import { Camera, AlertCircle, Maximize2, Minimize2, Download, X, ScanFace, Loader2 } from "lucide-react";
 
-// Density string from darkest to lightest
 const ASCII_CHARS = " .:-=+*#%@";
+
+// Dynamic script loader
+const loadScript = (src: string) => {
+  return new Promise<void>((resolve, reject) => {
+    if (typeof window === 'undefined') return resolve();
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const script = document.createElement("script");
+    script.src = src;
+    script.crossOrigin = "anonymous";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(script);
+  });
+};
 
 export default function AsciiCamera() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,17 +29,68 @@ export default function AsciiCamera() {
   const [error, setError] = useState<string | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isCapturing, setIsCapturing] = useState(false);
+  
+  // Neural State
+  const [neuralMode, setNeuralMode] = useState(false);
+  const [isModelLoading, setIsModelLoading] = useState(false);
+  const faceMeshRef = useRef<any>(null);
+  const latestLandmarksRef = useRef<any>(null);
+
   const requestRef = useRef<number>(0);
 
+  // --- Neural Engine Setup ---
+  const initNeuralEngine = async () => {
+    if (faceMeshRef.current) return;
+    setIsModelLoading(true);
+    
+    try {
+      await loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js");
+      
+      const faceMesh = new (window as any).FaceMesh({
+        locateFile: (file: string) => {
+          // Explicitly target the full URL to prevent the "undefined assets" error
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+        }
+      });
+
+      faceMesh.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: true,
+        minDetectionConfidence: 0.6,
+        minTrackingConfidence: 0.6
+      });
+
+      faceMesh.onResults((results: any) => {
+        if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+          latestLandmarksRef.current = results.multiFaceLandmarks[0];
+        } else {
+          latestLandmarksRef.current = null;
+        }
+      });
+
+      // Initialize the model
+      await faceMesh.initialize();
+      faceMeshRef.current = faceMesh;
+    } catch (err) {
+      console.error("Neural Engine error:", err);
+      setError("Biometric models failed to initialize.");
+    } finally {
+      setIsModelLoading(false);
+    }
+  };
+
+  const toggleNeuralMode = async () => {
+    if (!neuralMode) {
+      await initNeuralEngine();
+    }
+    setNeuralMode(!neuralMode);
+  };
+
+  // --- Camera Controls ---
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: "user",
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        } 
+        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } } 
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -35,134 +99,138 @@ export default function AsciiCamera() {
         setError(null);
       }
     } catch (err) {
-      console.error("Camera error:", err);
-      setError("Camera access denied or device not found.");
+      setError("Camera access denied.");
     }
   };
 
   const stopCamera = useCallback(() => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-      tracks.forEach(track => track.stop());
+    if (videoRef.current?.srcObject) {
+      (videoRef.current.srcObject as MediaStream).getTracks().forEach(t => t.stop());
       videoRef.current.srcObject = null;
     }
     setIsActive(false);
+    setNeuralMode(false);
     cancelAnimationFrame(requestRef.current);
     if (preRef.current) preRef.current.textContent = "";
   }, []);
 
-  const toggleFullscreen = () => {
-    if (!containerRef.current) return;
-    
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
-  useEffect(() => {
-    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener("fullscreenchange", handleFsChange);
-    return () => document.removeEventListener("fullscreenchange", handleFsChange);
-  }, []);
-
-  const takePicture = () => {
-    if (!preRef.current) return;
-    setIsCapturing(true);
-    
-    const asciiText = preRef.current.textContent || "";
-    const lines = asciiText.split("\n");
-    
-    // Create a high-res canvas for the snapshot
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const fontSize = 12;
-    const lineHeight = fontSize * 1.1;
-    
-    // Measure character width (monospace)
-    ctx.font = `${fontSize}px monospace`;
-    const charWidth = ctx.measureText("M").width;
-    
-    canvas.width = lines[0].length * charWidth + 40;
-    canvas.height = lines.length * lineHeight + 40;
-    
-    // Draw background
-    ctx.fillStyle = "#050505";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw text
-    ctx.fillStyle = "#ff4d14"; // Use accent color
-    ctx.font = `${fontSize}px monospace`;
-    ctx.textBaseline = "top";
-    
-    lines.forEach((line, i) => {
-      ctx.fillText(line, 20, 20 + i * lineHeight);
-    });
-
-    // Add watermark
-    ctx.fillStyle = "rgba(255,255,255,0.2)";
-    ctx.font = "10px monospace";
-    ctx.fillText("WEDESIGN // ASCII_CAPTURE", 20, canvas.height - 15);
-
-    // Download
-    const link = document.createElement("a");
-    link.download = `ascii-capture-${Date.now()}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    
-    setTimeout(() => setIsCapturing(false), 500);
-  };
-
-  const renderAscii = useCallback(() => {
+  // --- Main Render Loop ---
+  const renderLoop = useCallback(() => {
     if (!videoRef.current || !canvasRef.current || !preRef.current) return;
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-    if (!ctx || video.readyState !== HTMLMediaElement.HAVE_ENOUGH_DATA) {
-      requestRef.current = requestAnimationFrame(renderAscii);
+    if (!ctx || video.readyState < 2) {
+      requestRef.current = requestAnimationFrame(renderLoop);
       return;
     }
 
-    // Increased resolution for "bigger" look
     const width = isFullscreen ? 160 : 120;
     const height = Math.floor(width * (video.videoHeight / video.videoWidth) * 0.5); 
     
     if (canvas.width !== width) canvas.width = width;
     if (canvas.height !== height) canvas.height = height;
 
+    // Draw and capture frame
     ctx.drawImage(video, 0, 0, width, height);
+    
+    // Process FaceMesh if active (every few frames to save CPU)
+    if (neuralMode && faceMeshRef.current && Math.random() > 0.5) {
+       faceMeshRef.current.send({ image: video });
+    }
+
     const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
 
-    let asciiStr = "";
+    // 1. Build basic ASCII grid
+    const grid: string[][] = [];
     for (let y = 0; y < height; y++) {
+      const row: string[] = [];
       for (let x = 0; x < width; x++) {
         const mirroredX = width - 1 - x;
         const offset = (y * width + mirroredX) * 4;
         const brightness = (0.299 * data[offset] + 0.587 * data[offset+1] + 0.114 * data[offset+2]);
-        asciiStr += ASCII_CHARS[Math.floor((brightness / 255) * (ASCII_CHARS.length - 1))];
+        row.push(ASCII_CHARS[Math.floor((brightness / 255) * (ASCII_CHARS.length - 1))]);
       }
-      asciiStr += "\n";
+      grid.push(row);
     }
 
-    preRef.current.textContent = asciiStr;
-    requestRef.current = requestAnimationFrame(renderAscii);
-  }, [isFullscreen]);
+    // 2. Inject Biometric Overlays
+    if (neuralMode && latestLandmarksRef.current) {
+      const landmarks = latestLandmarksRef.current;
+      
+      // Calculate face bounds
+      let minX = width, maxX = 0, minY = height, maxY = 0;
+      landmarks.forEach((pt: any) => {
+        const x = Math.floor((1 - pt.x) * width); // Mirrored
+        const y = Math.floor(pt.y * height);
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      });
+
+      // Draw HUD corners
+      const pad = 4;
+      minX = Math.max(0, minX - pad); maxX = Math.min(width - 1, maxX + pad);
+      minY = Math.max(0, minY - 2); maxY = Math.min(height - 1, maxY + 2);
+
+      const drawBox = () => {
+        for(let i=0; i<5; i++) {
+          if (grid[minY][minX+i]) grid[minY][minX+i] = "+";
+          if (grid[minY+i]?.[minX]) grid[minY+i][minX] = "|";
+          if (grid[maxY][maxX-i]) grid[maxY][maxX-i] = "+";
+          if (grid[maxY-i]?.[maxX]) grid[maxY-i][maxX] = "|";
+        }
+      }
+      drawBox();
+
+      // Eye Tracking
+      const drawEye = (idx: number) => {
+        const pt = landmarks[idx];
+        const x = Math.floor((1 - pt.x) * width);
+        const y = Math.floor(pt.y * height);
+        if (grid[y]?.[x]) {
+          grid[y][x-1] = "["; grid[y][x] = "*"; grid[y][x+1] = "]";
+        }
+      }
+      drawEye(159); // Left
+      drawEye(386); // Right
+
+      // Status Text
+      const status = " [ NEURAL_LOCK_ACTIVE ] ";
+      if (minY > 1) {
+        for(let i=0; i<status.length; i++) {
+          if (grid[minY-1]?.[minX+i]) grid[minY-1][minX+i] = status[i];
+        }
+      }
+    }
+
+    preRef.current.textContent = grid.map(r => r.join('')).join('\n');
+    requestRef.current = requestAnimationFrame(renderLoop);
+  }, [isFullscreen, neuralMode]);
 
   useEffect(() => {
     if (isActive) {
-      requestRef.current = requestAnimationFrame(renderAscii);
+      requestRef.current = requestAnimationFrame(renderLoop);
     } else {
       cancelAnimationFrame(requestRef.current);
     }
     return () => cancelAnimationFrame(requestRef.current);
-  }, [isActive, renderAscii]);
+  }, [isActive, renderLoop]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const handleFs = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handleFs);
+    return () => document.removeEventListener("fullscreenchange", handleFs);
+  }, []);
 
   return (
     <div 
@@ -172,101 +240,54 @@ export default function AsciiCamera() {
       <video ref={videoRef} autoPlay playsInline muted className="hidden" />
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Permissions Overlay */}
       {!isActive && !error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 z-30 bg-background/80 backdrop-blur-sm">
-          <div className="relative">
-             <div className="absolute inset-0 bg-accent blur-2xl opacity-20 animate-pulse" />
-             <Camera size={64} className="text-foreground/40 relative z-10" />
-          </div>
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-foreground/60 max-w-sm text-center">
-            Initialize optical signal processor
-          </p>
-          <button 
-            onClick={startCamera}
-            className="group relative px-10 py-5 bg-foreground text-background font-bold text-xs uppercase tracking-[0.2em] overflow-hidden"
-          >
-            <span className="relative z-10">Start Capture</span>
-            <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <Camera size={48} className="text-foreground/40" />
+          <p className="font-mono text-xs uppercase tracking-widest text-foreground/60">Initialize Optical Processor</p>
+          <button onClick={startCamera} className="px-10 py-5 bg-foreground text-background font-bold text-xs uppercase tracking-[0.2em] hover:bg-accent hover:text-foreground transition-colors">
+            Start Stream
           </button>
         </div>
       )}
 
-      {/* Error Overlay */}
       {error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-30 bg-destructive/10">
           <AlertCircle size={48} className="text-destructive" />
-          <p className="font-mono text-sm uppercase tracking-widest text-destructive text-center px-4">
-            {error}
-          </p>
-          <button onClick={startCamera} className="mt-4 px-6 py-3 border-2 border-destructive text-destructive hover:bg-destructive hover:text-white transition-colors text-xs font-bold uppercase tracking-widest">
-            Retry Connection
-          </button>
+          <p className="font-mono text-sm text-destructive uppercase tracking-widest">{error}</p>
+          <button onClick={startCamera} className="px-6 py-3 border-2 border-destructive text-destructive uppercase text-xs font-bold">Retry</button>
         </div>
       )}
 
-      {/* ASCII Display */}
       {isActive && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="relative z-10 w-full h-full flex items-center justify-center p-2 md:p-8"
-        >
+        <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
           <pre 
             ref={preRef} 
             className="font-mono leading-[1.05] tracking-tight text-accent whitespace-pre select-none"
-            style={{ 
-              fontSize: isFullscreen ? 'min(0.65vw, 0.95vh)' : 'min(0.8vw, 1.1vh)',
-            }}
+            style={{ fontSize: isFullscreen ? 'min(0.65vw, 0.95vh)' : 'min(0.8vw, 1.1vh)' }}
           />
-          
-          {/* CRT Effects */}
           <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,1)_50%)] bg-[length:100%_4px]" />
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
-        </motion.div>
+        </div>
       )}
 
-      {/* Interface Overlays */}
-      <div className="absolute bottom-6 left-6 z-20 font-mono text-[10px] uppercase tracking-widest text-foreground/30 pointer-events-none hidden md:flex flex-col gap-1">
-        <span className="flex items-center gap-2"><div className="w-1 h-1 bg-accent rounded-full animate-ping" /> Capturing signal_01</span>
-        <span>Resolution: {isFullscreen ? '160xAuto' : '120xAuto'}</span>
-        <span className="text-accent">$ system.draw(optical_buffer)</span>
+      <div className="absolute bottom-6 left-6 z-20 font-mono text-[10px] uppercase tracking-widest text-foreground/30 pointer-events-none flex flex-col gap-1">
+        <span>$ status: {isActive ? "capturing" : "idle"}</span>
+        {neuralMode && <span className="text-accent">$ neural_link: established</span>}
       </div>
 
-      {/* Controls */}
       <AnimatePresence>
         {isActive && (
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-            className="absolute bottom-6 right-6 z-30 flex items-center gap-3"
-          >
-            {/* Take Picture */}
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="absolute bottom-6 right-6 z-30 flex items-center gap-3">
             <button 
-              onClick={takePicture}
-              disabled={isCapturing}
-              className="p-4 bg-foreground text-background hover:bg-accent hover:text-foreground transition-all duration-300 rounded-none border border-foreground/10 group"
-              title="Take Snapshot"
+              onClick={toggleNeuralMode}
+              className={`p-4 border-2 transition-all ${neuralMode ? 'bg-accent text-black border-accent' : 'bg-card text-foreground border-foreground hover:bg-foreground hover:text-background'}`}
+              title="Toggle Biometrics"
             >
-              {isCapturing ? <Loader2 className="animate-spin" size={20} /> : <Download size={20} className="group-hover:scale-110 transition-transform" />}
+              {isModelLoading ? <Loader2 size={20} className="animate-spin" /> : <ScanFace size={20} />}
             </button>
-
-            {/* Fullscreen Toggle */}
-            <button 
-              onClick={toggleFullscreen}
-              className="p-4 bg-card text-foreground border-2 border-foreground hover:bg-foreground hover:text-background transition-all duration-300"
-              title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-            >
+            <button onClick={toggleFullscreen} className="p-4 bg-card text-foreground border-2 border-foreground hover:bg-foreground hover:text-background transition-all">
               {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
             </button>
-
-            {/* Terminate */}
-            <button 
-              onClick={stopCamera}
-              className="p-4 bg-card text-foreground border-2 border-foreground hover:bg-red-600 hover:border-red-600 hover:text-white transition-all duration-300"
-              title="Terminate Processor"
-            >
+            <button onClick={stopCamera} className="p-4 bg-card text-foreground border-2 border-foreground hover:bg-red-600 hover:border-red-600 hover:text-white transition-all">
               <X size={20} />
             </button>
           </motion.div>
@@ -274,16 +295,4 @@ export default function AsciiCamera() {
       </AnimatePresence>
     </div>
   );
-}
-
-function Loader2({ className, size }: { className?: string, size?: number }) {
-    return (
-        <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className={className}
-        >
-            <Camera size={size} />
-        </motion.div>
-    );
 }

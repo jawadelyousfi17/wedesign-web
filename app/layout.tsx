@@ -5,6 +5,8 @@ import "./styles.css";
 import { Navbar } from "@/components/main/Navbar";
 import Footer from "@/components/main/Footer";
 import { CommandPalette } from "@/components/main/CommandPalette";
+import HandMouseProvider from "@/components/hand-mouse-provider";
+import DigitalWhip from "@/components/main/DigitalWhip";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -73,10 +75,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${cardo.variable} h-full antialiased`}
+      className={` ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${cardo.variable} h-full antialiased`}
     >
       <body>
         <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
+          {/* <DigitalWhip /> */}
+          <HandMouseProvider/>
           <Navbar />
           <CommandPalette />
           <main className="flex-1 max-w-7xl mx-auto w-full">

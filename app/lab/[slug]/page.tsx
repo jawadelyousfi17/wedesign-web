@@ -5,6 +5,12 @@ import KineticGlyphs from "@/components/lab/KineticGlyphs";
 import Glyph3D from "@/components/lab/glyph3d";
 import AsciiDonut from "@/components/lab/AsciiDonut";
 import AsciiCamera from "@/components/lab/AsciiCamera";
+import GravityTerminal from "@/components/lab/GravityTerminal";
+import AnimalVision from "@/components/lab/AnimalVision";
+import NeuralInterface from "@/components/lab/NeuralInterface";
+import VirtualHandMouse from "@/components/lab/VirtualHandMouse";
+import RockPaperScissors from "@/components/lab/RockPaperScissors";
+import AsciiVideoConverter from "@/components/lab/AsciiVideoConverter";
 import { Beaker, ArrowLeft, Calendar, Tag } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -29,6 +35,18 @@ export default async function ExperimentPage({ params }: { params: Promise<{ slu
   // Map slugs to components
   const renderExperiment = () => {
     switch (slug) {
+      case "video-ascii-converter":
+        return <AsciiVideoConverter />;
+      case "rock-paper-scissors":
+        return <RockPaperScissors />;
+      case "virtual-hand-mouse":
+        return <VirtualHandMouse />;
+      case "neural-interface":
+        return <NeuralInterface />;
+      case "animal-vision":
+        return <AnimalVision />;
+      case "gravity-terminal":
+        return <GravityTerminal />;
       case "ascii-camera":
         return <AsciiCamera />;
       case "ascii-donut":
