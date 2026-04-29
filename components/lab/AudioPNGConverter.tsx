@@ -168,7 +168,7 @@ export default function AudioPNGConverter() {
         const { data, filename } = await decodePNGtoAudio(file);
         const ext = filename.split(".").pop()?.toLowerCase() ?? "mp3";
         const mime = ext === "wav" ? "audio/wav" : ext === "ogg" ? "audio/ogg" : "audio/mpeg";
-        const blob = new Blob([data], { type: mime });
+        const blob = new Blob([data.buffer as ArrayBuffer], { type: mime });
         const url = URL.createObjectURL(blob);
         prevUrl.current = url;
         setResultUrl(url);
