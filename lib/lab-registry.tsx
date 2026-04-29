@@ -1,5 +1,5 @@
 import React from "react";
-import { Zap, Beaker, Type, Move, Wind, Terminal, Camera, ScanFace, MousePointer2, Video } from "lucide-react";
+import { Zap, Beaker, Type, Move, Wind, Terminal, Camera, ScanFace, MousePointer2, Video, Music, Orbit } from "lucide-react";
 
 export interface Experiment {
   slug: string;
@@ -101,6 +101,24 @@ export const EXPERIMENTS: Experiment[] = [
     difficulty: "Advanced",
     icon: <Type className="w-5 h-5" />,
     tags: ["Three.js", "WebGL", "Shaders"],
+  },
+  {
+    slug: "particle-black-hole",
+    title: "Particle Black Hole",
+    description: "70,000 particles spiraling into a singularity. GPU-driven orbital physics, relativistic jets, and event horizon glow. Move your cursor to warp the field.",
+    date: "2026-04-25",
+    difficulty: "Advanced",
+    icon: <Orbit className="w-5 h-5" />,
+    tags: ["Three.js", "WebGL", "Shaders", "Physics"],
+  },
+  {
+    slug: "audio-png-converter",
+    title: "Audio ↔ PNG Converter",
+    description: "Encode any audio file into a PNG image by packing bytes into RGB pixel values. Decode it back out — lossless, byte-perfect.",
+    date: "2026-04-24",
+    difficulty: "Intermediate",
+    icon: <Music className="w-5 h-5" />,
+    tags: ["Canvas", "Binary", "Steganography"],
   },
   {
     slug: "halftone-shifty",

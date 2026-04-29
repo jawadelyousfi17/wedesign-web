@@ -51,7 +51,7 @@ export async function updateArticle(id: string, formData: FormData) {
   const content = formData.get("content") as string;
   const category = formData.get("category") as ArticleCategory;
   
-  await prisma.article.update({
+  const updated = await prisma.article.update({
     where: { id },
     data: {
       title,
@@ -61,6 +61,7 @@ export async function updateArticle(id: string, formData: FormData) {
   });
 
   revalidatePath("/journal");
+  revalidatePath(`/journal/${updated.slug}`);
   revalidatePath("/");
   redirect("/admin/journal");
 }

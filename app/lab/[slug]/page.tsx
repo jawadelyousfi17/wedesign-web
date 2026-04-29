@@ -11,6 +11,8 @@ import NeuralInterface from "@/components/lab/NeuralInterface";
 import VirtualHandMouse from "@/components/lab/VirtualHandMouse";
 import RockPaperScissors from "@/components/lab/RockPaperScissors";
 import AsciiVideoConverter from "@/components/lab/AsciiVideoConverter";
+import AudioPNGConverter from "@/components/lab/AudioPNGConverter";
+import ParticleBlackHole from "@/components/lab/ParticleBlackHole";
 import { Beaker, ArrowLeft, Calendar, Tag } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -35,6 +37,10 @@ export default async function ExperimentPage({ params }: { params: Promise<{ slu
   // Map slugs to components
   const renderExperiment = () => {
     switch (slug) {
+      case "particle-black-hole":
+        return <ParticleBlackHole />;
+      case "audio-png-converter":
+        return <AudioPNGConverter />;
       case "video-ascii-converter":
         return <AsciiVideoConverter />;
       case "rock-paper-scissors":

@@ -80,7 +80,7 @@ export default function RootLayout({
       <body>
         <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
           {/* <DigitalWhip /> */}
-          <HandMouseProvider/>
+          {/* <HandMouseProvider/> */}
           <Navbar />
           <CommandPalette />
           <main className="flex-1 max-w-7xl mx-auto w-full">
